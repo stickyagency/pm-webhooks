@@ -25,14 +25,25 @@ class BigCommerceService {
         ...options
       };
 
+      console.log(`[BigCommerce] Fetching orders from: ${this.baseUrlV2}/orders`);
+      console.log(`[BigCommerce] Params:`, params);
+
       const response = await axios.get(`${this.baseUrlV2}/orders`, {
         headers: this.headers,
         params
       });
 
+      console.log(`[BigCommerce] API Response status: ${response.status}`);
+      console.log(`[BigCommerce] API Response data length: ${response.data?.length || 0}`);
+
       return response.data || [];
     } catch (error) {
       console.error('Error fetching orders from BigCommerce:', error.response?.data || error.message);
+      console.error('Error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data
+      });
       throw new Error(`Failed to fetch orders: ${error.message}`);
     }
   }
@@ -58,10 +69,19 @@ class BigCommerceService {
       tomorrow.setDate(tomorrow.getDate() + 1);
       const tomorrowTime = tomorrow.getTime();
 
+      console.log(`[BigCommerce] Found ${orders.length} total orders from API`);
+      console.log(`[BigCommerce] Looking for orders between ${new Date(todayTime).toISOString()} and ${new Date(tomorrowTime).toISOString()}`);
+
       const todayOrders = orders.filter(order => {
         const orderDate = new Date(order.date_created);
         const orderTime = orderDate.getTime();
-        return orderTime >= todayTime && orderTime < tomorrowTime;
+        const isToday = orderTime >= todayTime && orderTime < tomorrowTime;
+        
+        if (isToday) {
+          console.log(`[BigCommerce] Found today's order: ${order.id} - ${order.date_created}`);
+        }
+        
+        return isToday;
       });
 
       // Get shipping method for each order
