@@ -1,5 +1,5 @@
-const EmailService = require('../../services/email');
-const BigCommerceService = require('../../services/bigcommerce');
+const EmailService = require('../services/email');
+const BigCommerceService = require('../services/bigcommerce');
 
 /**
  * Test email endpoint - verifies email functionality

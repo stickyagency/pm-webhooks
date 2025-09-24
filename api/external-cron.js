@@ -1,5 +1,5 @@
-const BigCommerceService = require('../../services/bigcommerce');
-const EmailService = require('../../services/email');
+const BigCommerceService = require('../services/bigcommerce');
+const EmailService = require('../services/email');
 
 /**
  * External cron endpoint for cron-job.org

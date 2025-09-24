@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
     // Test BigCommerce connection
     let bigCommerceTest = { status: 'not_tested', error: null };
     try {
-      const BigCommerceService = require('../../services/bigcommerce');
+      const BigCommerceService = require('../services/bigcommerce');
       const bc = new BigCommerceService();
       const orders = await bc.getAllOrdersWithShipping();
       bigCommerceTest = { 
@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
     // Test email service
     let emailTest = { status: 'not_tested', error: null };
     try {
-      const EmailService = require('../../services/email');
+      const EmailService = require('../services/email');
       const email = new EmailService();
       // Don't actually send email, just test initialization
       emailTest = { status: 'initialized' };
