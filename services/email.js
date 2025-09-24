@@ -1,6 +1,16 @@
 const sgMail = require('@sendgrid/mail');
 const config = require('../config');
 
+// Helper function to get EDT date string
+function getEDTDateString() {
+  return new Date().toLocaleDateString('en-US', { timeZone: 'America/New_York' });
+}
+
+// Helper function to get EDT date and time string
+function getEDTDateTimeString() {
+  return new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+}
+
 class EmailService {
   constructor() {
     sgMail.setApiKey(config.sendgrid.apiKey);
@@ -27,7 +37,7 @@ class EmailService {
           email: config.sendgrid.fromEmail,
           name: 'Power Manufacturing Orders'
         },
-        subject: `Daily Orders Summary Report - ${new Date().toLocaleDateString()}`,
+        subject: `Daily Orders Summary Report - ${getEDTDateString()}`,
         html: emailContent.html,
         text: emailContent.text
       };
@@ -55,12 +65,12 @@ class EmailService {
               <td>
                 <h2 style="color: #333; margin: 0; font-family: Arial, sans-serif;">Power Manufacturing - Daily Orders Report</h2>
                 <p style="color: #333; margin: 15px 0; font-family: Arial, sans-serif;">No orders found for today.</p>
-                <p style="color: #333; margin: 0; font-family: Arial, sans-serif;">Date: ${new Date().toLocaleDateString()}</p>
+                <p style="color: #333; margin: 0; font-family: Arial, sans-serif;">Date: ${getEDTDateString()}</p>
               </td>
             </tr>
           </table>
         `,
-        text: `Power Manufacturing - Daily Orders Report\n\nNo orders found for today.\nDate: ${new Date().toLocaleDateString()}`
+        text: `Power Manufacturing - Daily Orders Report\n\nNo orders found for today.\nDate: ${getEDTDateString()}`
       };
     }
 
@@ -177,7 +187,7 @@ class EmailService {
               <tr>
                 <td style="padding: 15px 0;">
                   <p style="color: #333; margin: 0; font-family: Arial, sans-serif;">
-                    <strong>Date:</strong> ${new Date().toLocaleDateString()}<br>
+                    <strong>Date:</strong> ${getEDTDateString()}<br>
                     <strong>Total Orders:</strong> ${orders.length}<br>
                     <strong>Urgent Orders:</strong> ${urgentOrders.length}
                   </p>
@@ -373,7 +383,7 @@ class EmailService {
    */
   generateTextContent(orders) {
     if (orders.length === 0) {
-      return `Power Manufacturing - Daily Orders Report\n\nNo orders found for today.\nDate: ${new Date().toLocaleDateString()}`;
+      return `Power Manufacturing - Daily Orders Report\n\nNo orders found for today.\nDate: ${getEDTDateString()}`;
     }
 
     // Separate urgent orders from others
@@ -398,7 +408,7 @@ class EmailService {
     });
 
     let text = `Power Manufacturing - Daily Orders Report\n\n`;
-    text += `Date: ${new Date().toLocaleDateString()}\n`;
+    text += `Date: ${getEDTDateString()}\n`;
     text += `Total Orders: ${orders.length}\n\n`;
 
     // Urgent orders section
@@ -447,10 +457,10 @@ class EmailService {
             <h2 style="color: #333;">Test Email</h2>
             <p>This is a test email from Power Manufacturing's webhook system.</p>
             <p>If you're receiving this, the email configuration is working correctly!</p>
-            <p>Time: ${new Date().toLocaleString()}</p>
+            <p>Time: ${getEDTDateTimeString()}</p>
           </div>
         `,
-        text: `Test Email\n\nThis is a test email from Power Manufacturing's webhook system.\nIf you're receiving this, the email configuration is working correctly!\nTime: ${new Date().toLocaleString()}`
+        text: `Test Email\n\nThis is a test email from Power Manufacturing's webhook system.\nIf you're receiving this, the email configuration is working correctly!\nTime: ${getEDTDateTimeString()}`
       };
 
       const response = await sgMail.send(msg);
