@@ -60,25 +60,33 @@ class BigCommerceService {
         sort: 'date_created:desc'
       });
 
-      // Filter orders from today only
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Start of today
-      const todayTime = today.getTime();
+      // Filter orders from today only (ET timezone)
+      const now = new Date();
+      // Convert to ET (UTC-5, adjust for DST if needed)
+      const etOffset = -5 * 60; // ET is UTC-5
+      const etNow = new Date(now.getTime() + (etOffset * 60 * 1000));
       
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowTime = tomorrow.getTime();
+      const todayET = new Date(etNow);
+      todayET.setHours(0, 0, 0, 0);
+      const todayTimeET = todayET.getTime();
+      
+      const tomorrowET = new Date(todayET);
+      tomorrowET.setDate(tomorrowET.getDate() + 1);
+      const tomorrowTimeET = tomorrowET.getTime();
 
       console.log(`[BigCommerce] Found ${orders.length} total orders from API`);
-      console.log(`[BigCommerce] Looking for orders between ${new Date(todayTime).toISOString()} and ${new Date(tomorrowTime).toISOString()}`);
+      console.log(`[BigCommerce] Server time (UTC): ${now.toISOString()}`);
+      console.log(`[BigCommerce] ET time: ${etNow.toISOString()}`);
+      console.log(`[BigCommerce] Looking for orders between ${new Date(todayTimeET).toISOString()} and ${new Date(tomorrowTimeET).toISOString()}`);
 
       const todayOrders = orders.filter(order => {
         const orderDate = new Date(order.date_created);
-        const orderTime = orderDate.getTime();
-        const isToday = orderTime >= todayTime && orderTime < tomorrowTime;
+        // Convert order date to ET for comparison
+        const orderTimeET = orderDate.getTime() + (etOffset * 60 * 1000);
+        const isToday = orderTimeET >= todayTimeET && orderTimeET < tomorrowTimeET;
         
         if (isToday) {
-          console.log(`[BigCommerce] Found today's order: ${order.id} - ${order.date_created}`);
+          console.log(`[BigCommerce] Found today's order: ${order.id} - ${order.date_created} (ET: ${new Date(orderTimeET).toISOString()})`);
         }
         
         return isToday;
