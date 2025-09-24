@@ -20,10 +20,4 @@
       "dest": "/index.html"
     }
   ],
-  "crons": [
-    {
-      "path": "/api/cron/daily-orders",
-      "schedule": "0 20 * * *"
-    }
-  ]
 }
