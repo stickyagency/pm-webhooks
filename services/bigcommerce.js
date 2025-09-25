@@ -85,11 +85,16 @@ class BigCommerceService {
         const orderTimeEDT = orderDate.getTime() + (edtOffset * 60 * 1000);
         const isToday = orderTimeEDT >= todayTimeEDT && orderTimeEDT < tomorrowTimeEDT;
         
+        // Only include orders that are completed/paid (not declined or incomplete)
+        const isCompleted = order.payment_status !== 'declined' && 
+                           order.status !== 'Incomplete' && 
+                           order.status_id !== 0;
+        
         if (isToday) {
-          console.log(`[BigCommerce] Found today's order: ${order.id} - ${order.date_created} (EDT: ${new Date(orderTimeEDT).toISOString()})`);
+          console.log(`[BigCommerce] Found today's order: ${order.id} - ${order.date_created} (EDT: ${new Date(orderTimeEDT).toISOString()}) - Status: ${order.status} (${order.payment_status})`);
         }
         
-        return isToday;
+        return isToday && isCompleted;
       });
 
       // Get shipping method for each order
